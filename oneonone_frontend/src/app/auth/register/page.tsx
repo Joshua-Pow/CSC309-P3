@@ -4,36 +4,63 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 
+import { registerUser } from "@/lib/axiosUtil";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+
 const registerSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
+  username: z
+    .string()
+    .min(1)
+    .regex(
+      /^[a-zA-Z0-9@.+_-]+$/,
+      "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+    ),
   email: z.string().email(),
   password: z.string().min(8),
   password2: z.string().min(8),
 });
 
+export type RegisterUser = z.infer<typeof registerSchema>;
+
 export default function RegisterPage() {
-  const registerForm = useForm<z.infer<typeof registerSchema>>({
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  const registerForm = useForm<RegisterUser>({
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (values: z.infer<typeof registerSchema>) => {
+  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     console.log(values);
+    try {
+      await registerUser(values);
+      router.push("/auth/login");
+    } catch (error) {
+      console.error("Error registering user:", error);
+    }
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <div className="min-h-screen w-full lg:grid  lg:grid-cols-2 ">
@@ -98,6 +125,24 @@ export default function RegisterPage() {
                   )}
                 />
               </div>
+              <FormField
+                control={registerForm.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor={field.name}>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        id={field.name}
+                        placeholder="max_robinson"
+                        required
+                      />
+                    </FormControl>
+                    <FormMessage {...field} />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={registerForm.control}
                 name="email"

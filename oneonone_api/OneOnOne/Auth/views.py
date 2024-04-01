@@ -8,6 +8,23 @@ from rest_framework.decorators import permission_classes
 from drf_spectacular.utils import OpenApiResponse
 
 
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+
+
+@extend_schema_view(
+    post=extend_schema(
+        description="Login to get a JWT token",
+        request=CustomTokenObtainPairSerializer,
+        responses={
+            200: OpenApiResponse(description="JWT token generated successfully")
+        },
+    ),
+)
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
 @extend_schema_view(
     post=extend_schema(
         description="Register a new user",
