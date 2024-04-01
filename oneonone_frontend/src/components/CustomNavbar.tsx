@@ -12,50 +12,53 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
+import NextLink from "next/link";
+import { usePathname } from "next/navigation";
 
 type Props = {};
 
 const CustomNavbar = (props: Props) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const path = usePathname();
 
-  const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-  ];
+  const menuItems = ["About", "Schedules", "Contacts", "Logout"];
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen}>
+    <Navbar onMenuOpenChange={setIsMenuOpen} disableAnimation={false}>
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
         <NavbarBrand>
-          <p className="font-bold text-inherit">1on1</p>
+          <NextLink href="/" className="font-bold text-inherit">
+            1on1
+          </NextLink>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
+        <NavbarItem isActive={path === "/about"}>
+          <Link
+            color={path === "/about" ? "primary" : "foreground"}
+            href="/about"
+          >
             About
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Schedules
+        <NavbarItem isActive={path === "/schedule"}>
+          <Link
+            color={path === "/schedule" ? "primary" : "foreground"}
+            href="/schedule"
+          >
+            Schedule
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
+        <NavbarItem isActive={path === "/contacts"}>
+          <Link
+            color={path === "/contacts" ? "primary" : "foreground"}
+            href="/contacts"
+          >
             Contacts
           </Link>
         </NavbarItem>
@@ -65,7 +68,12 @@ const CustomNavbar = (props: Props) => {
           <Link href="#">Login</Link>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button
+            as={Link}
+            color="primary"
+            href="/auth/register"
+            variant="flat"
+          >
             Sign Up
           </Button>
         </NavbarItem>
