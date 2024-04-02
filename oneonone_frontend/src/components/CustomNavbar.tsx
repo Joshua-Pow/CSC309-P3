@@ -9,7 +9,6 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
-  Link,
   Button,
   Dropdown,
   DropdownTrigger,
@@ -17,15 +16,15 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import NextLink from "next/link";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { UserDetails } from "@/context/AuthContext";
 
 type Props = { isLoggedIn: boolean; userDetails: UserDetails | null };
 
-const CustomNavbar = (props: Props) => {
-  const { logout, isLoggedIn, userDetails } = useAuth();
+const CustomNavbar = ({ isLoggedIn, userDetails }: Props) => {
+  const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const path = usePathname();
 
@@ -39,16 +38,16 @@ const CustomNavbar = (props: Props) => {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <NextLink href="/" className="font-bold text-inherit">
+          <Link href="/" className="font-bold text-inherit">
             1on1
-          </NextLink>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
         <NavbarItem isActive={path === "/about"}>
           <Link
-            color={path === "/about" ? "primary" : "foreground"}
+            className={path === "/about" ? "font-bold text-primary" : ""}
             href="/about"
           >
             About
@@ -56,7 +55,7 @@ const CustomNavbar = (props: Props) => {
         </NavbarItem>
         <NavbarItem isActive={path === "/schedule"}>
           <Link
-            color={path === "/schedule" ? "primary" : "foreground"}
+            className={path === "/schedule" ? "font-bold text-primary" : ""}
             href="/schedule"
           >
             Schedule
@@ -64,7 +63,7 @@ const CustomNavbar = (props: Props) => {
         </NavbarItem>
         <NavbarItem isActive={path === "/contacts"}>
           <Link
-            color={path === "/contacts" ? "primary" : "foreground"}
+            className={path === "/contacts" ? "font-bold text-primary" : ""}
             href="/contacts"
           >
             Contacts
@@ -86,20 +85,17 @@ const CustomNavbar = (props: Props) => {
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
+              <DropdownItem
+                key="profile"
+                className="h-14 gap-2"
+                textValue={`signed in as ${userDetails?.firstName} ${userDetails?.lastName}`}
+              >
+                <p className="font-semibold">Signed in as:</p>
                 <p className="font-semibold">
                   {userDetails?.firstName} {userDetails?.lastName}
                 </p>
               </DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="team_settings">Team Settings</DropdownItem>
-              <DropdownItem key="analytics">Analytics</DropdownItem>
-              <DropdownItem key="system">System</DropdownItem>
-              <DropdownItem key="configurations">Configurations</DropdownItem>
-              <DropdownItem key="help_and_feedback">
-                Help & Feedback
-              </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={logout}>
                 Log Out
               </DropdownItem>
@@ -127,16 +123,14 @@ const CustomNavbar = (props: Props) => {
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
-              color={
+              className={
                 item.toLowerCase() === "logout"
-                  ? "danger"
+                  ? "w-full text-danger"
                   : path === `/${item.toLowerCase()}`
-                    ? "primary"
-                    : "foreground"
+                    ? "w-full font-bold text-primary"
+                    : "w-full text-foreground"
               }
-              className="w-full"
               href={`/${item.toLowerCase()}`}
-              size="lg"
             >
               {item}
             </Link>
