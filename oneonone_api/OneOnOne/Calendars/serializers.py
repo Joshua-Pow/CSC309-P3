@@ -6,10 +6,11 @@ from django.contrib.auth.models import User
 
 class ParticipantSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
+    email = serializers.EmailField(source="user.email")
 
     class Meta:
         model = Participant
-        fields = ["id", "username"]
+        fields = ["id", "username", "email"]
 
     def get_username(self, obj):
         return obj.user.username
@@ -26,9 +27,7 @@ class DaySerializer(serializers.ModelSerializer):
 class CalendarSerializer(serializers.ModelSerializer):
     days = DaySerializer(many=True)
     creator_username = serializers.SerializerMethodField()
-    participants = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), many=True, required=False, allow_null=True
-    )
+    participants = ParticipantSerializer(many=True, required=False, allow_null=True)
 
     def get_creator_username(self, obj) -> str:
         return obj.creator.username

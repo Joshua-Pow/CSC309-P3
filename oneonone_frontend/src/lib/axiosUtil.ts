@@ -57,6 +57,7 @@ axiosInstance.interceptors.response.use(
         });
         const { access } = refreshResponse.data;
         // Assume the context or somewhere else updates the localStorage, just update the request here
+        localStorage.setItem("accessToken", access);
         originalRequest.headers["Authorization"] = "Bearer " + access;
         return axiosInstance(originalRequest); // Retry the original request with the new token
       } catch (refreshError) {

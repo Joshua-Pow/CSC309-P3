@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from drf_spectacular.utils import OpenApiResponse
 from rest_framework.exceptions import PermissionDenied
+from django.db.models import Q
 
 
 @extend_schema_view(
@@ -31,6 +32,13 @@ class CalendarListCreateAPIView(generics.ListCreateAPIView):
         if self.request.method == "POST":
             return CalendarCreateSerializer
         return CalendarSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        return Calendar.objects.filter(
+            Q(creator=user) | Q(participants__user=user)
+        ).distinct()
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
