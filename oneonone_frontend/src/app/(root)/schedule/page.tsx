@@ -16,8 +16,8 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import CreateCalendar from "@/components/CreateCalendar";
@@ -150,15 +150,14 @@ const Schedule = () => {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>Create a new calendar</DialogHeader>
-              <DialogDescription>
-                Input details to create a new calendar to schedule events, click
-                submit when done.
-              </DialogDescription>
+              <DialogHeader>
+                <DialogTitle>Create a new calendar</DialogTitle>{" "}
+                <DialogDescription>
+                  Input details to create a new calendar to schedule events,
+                  click submit when done.
+                </DialogDescription>
+              </DialogHeader>
               <CreateCalendar />
-              <DialogFooter>
-                <Button type="submit">Submit</Button>
-              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
