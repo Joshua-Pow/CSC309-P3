@@ -17,13 +17,14 @@ import {
   DropdownItem,
 } from "@nextui-org/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { UserDetails } from "@/context/AuthContext";
 
 type Props = { isLoggedIn: boolean; userDetails: UserDetails | null };
 
 const CustomNavbar = ({ isLoggedIn, userDetails }: Props) => {
+  const router = useRouter();
   const { logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const path = usePathname();
@@ -96,7 +97,14 @@ const CustomNavbar = ({ isLoggedIn, userDetails }: Props) => {
                 </p>
               </DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={logout}>
+              <DropdownItem
+                key="logout"
+                color="danger"
+                onClick={() => {
+                  logout();
+                  router.push("/");
+                }}
+              >
                 Log Out
               </DropdownItem>
             </DropdownMenu>

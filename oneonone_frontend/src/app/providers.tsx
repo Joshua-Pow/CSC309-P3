@@ -3,11 +3,15 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { AuthProvider } from "@/context/AuthContext";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextUIProvider>
-      <AuthProvider>{children}</AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>{children}</AuthProvider>
+      </QueryClientProvider>
     </NextUIProvider>
   );
 }

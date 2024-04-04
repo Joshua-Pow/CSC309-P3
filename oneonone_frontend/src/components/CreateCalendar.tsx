@@ -15,7 +15,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import DatePicker from "./DatePicker";
 import { PlusIcon, Trash } from "lucide-react";
-import axiosInstance from "@/lib/axiosUtil";
+import { CreateCalendarValues } from "@/app/(root)/schedule/page";
+
+type Props = {
+  onCalendarCreate: (calendarData: CreateCalendarValues) => Promise<void>;
+};
 
 const calendarSchema = z.object({
   title: z.string().min(1),
@@ -29,14 +33,6 @@ const calendarSchema = z.object({
 });
 
 type Calendar = z.infer<typeof calendarSchema>;
-type CalendarStringified = {
-  title: string;
-  description: string;
-  days: {
-    date: string;
-    ranking: number;
-  }[];
-};
 
 function formatDate(date: Date) {
   const d = new Date(date);
@@ -50,7 +46,7 @@ function formatDate(date: Date) {
   return [year, month, day].join("-");
 }
 
-const CreateCalendar = () => {
+const CreateCalendar = ({ onCalendarCreate }: Props) => {
   const form = useForm<Calendar>({
     resolver: zodResolver(calendarSchema),
     mode: "onChange",
@@ -106,7 +102,7 @@ const CreateCalendar = () => {
 
     // Clone the data to avoid directly mutating the state
     // Also, convert each date to 'yyyy-mm-dd' format during cloning
-    const modifiedData: CalendarStringified = {
+    const modifiedData: CreateCalendarValues = {
       ...values,
       days: values.days.map((day) => ({
         ...day,
@@ -115,7 +111,7 @@ const CreateCalendar = () => {
     };
 
     console.log(modifiedData);
-    axiosInstance.post("/calendars/", modifiedData);
+    onCalendarCreate(modifiedData);
   };
   return (
     <Form {...form}>

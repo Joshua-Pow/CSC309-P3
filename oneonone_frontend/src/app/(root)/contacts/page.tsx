@@ -4,14 +4,28 @@ import FriendsList from "@/components/FriendsList";
 import IncomingList from "@/components/IncomingList";
 import OutgoingList from "@/components/OutgoingList";
 import AddContacts from "@/components/AddContacts";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const Contacts = () => {
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push("/auth/login");
+    }
+  }, [isLoggedIn, router]);
   const [activeList, setActiveList] = useState<
     "friends" | "outgoing" | "incoming"
   >("friends");
   const [showAddContactsModal, setShowAddContactsModal] = useState(false);
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">

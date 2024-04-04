@@ -45,23 +45,26 @@ axiosInstance.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        // Attempt to refresh token
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) {
-          // Handle case where there is no refresh token available
           console.error("No refresh token available.");
+          // Redirect to login page
+          window.dispatchEvent(new CustomEvent("refreshTokenFailed"));
+          window.location.href = "/auth/login";
           return Promise.reject(error);
         }
         const refreshResponse = await axiosInstance.post("auth/refresh/", {
           refresh: refreshToken,
         });
         const { access } = refreshResponse.data;
-        // Assume the context or somewhere else updates the localStorage, just update the request here
         localStorage.setItem("accessToken", access);
         originalRequest.headers["Authorization"] = "Bearer " + access;
-        return axiosInstance(originalRequest); // Retry the original request with the new token
+        return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
+        // If refresh token is expired, redirect to login page
+        window.dispatchEvent(new CustomEvent("refreshTokenFailed"));
+        window.location.href = "/auth/login";
         return Promise.reject(refreshError);
       }
     }

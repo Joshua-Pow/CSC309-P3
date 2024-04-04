@@ -36,6 +36,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   useEffect(() => {
+    window.addEventListener("refreshTokenFailed", logout);
+
+    return () => {
+      window.removeEventListener("refreshTokenFailed", logout);
+    };
+  }, []);
+
+  useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
     const userDetailsString = localStorage.getItem("userDetails");
     const userDetails = userDetailsString
