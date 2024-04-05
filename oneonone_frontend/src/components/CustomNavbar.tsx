@@ -29,7 +29,7 @@ const CustomNavbar = ({ isLoggedIn, userDetails }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const path = usePathname();
 
-  const menuItems = ["About", "Schedule", "Contacts", "Logout"];
+  const menuItems = ["About", "Calendars", "Contacts", "Logout"];
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} disableAnimation={false}>
@@ -46,25 +46,31 @@ const CustomNavbar = ({ isLoggedIn, userDetails }: Props) => {
       </NavbarContent>
 
       <NavbarContent className="hidden gap-4 sm:flex" justify="center">
-        <NavbarItem isActive={path === "/about"}>
+        <NavbarItem isActive={path.startsWith("/about")}>
           <Link
-            className={path === "/about" ? "font-bold text-primary" : ""}
+            className={
+              path.startsWith("/about") ? "font-bold text-primary" : ""
+            }
             href="/about"
           >
             About
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={path === "/schedule"}>
+        <NavbarItem isActive={path.startsWith("/calendars")}>
           <Link
-            className={path === "/schedule" ? "font-bold text-primary" : ""}
-            href="/schedule"
+            className={
+              path.startsWith("/calendars") ? "font-bold text-primary" : ""
+            }
+            href="/calendars"
           >
-            Schedule
+            Calendars
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={path === "/contacts"}>
+        <NavbarItem isActive={path.startsWith("/contacts")}>
           <Link
-            className={path === "/contacts" ? "font-bold text-primary" : ""}
+            className={
+              path.startsWith("/contacts") ? "font-bold text-primary" : ""
+            }
             href="/contacts"
           >
             Contacts

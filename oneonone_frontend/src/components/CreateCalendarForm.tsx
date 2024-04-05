@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import DatePicker from "./DatePicker";
 import { PlusIcon, Trash } from "lucide-react";
-import { CreateCalendarValues } from "@/app/(root)/schedule/page";
+import { CreateCalendarValues } from "@/app/(root)/calendars/page";
 
 type Props = {
   onCalendarCreate: (calendarData: CreateCalendarValues) => Promise<void>;
@@ -59,6 +59,7 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
   });
 
   const onSubmit = async (values: Calendar) => {
+    let isError = false;
     //Manually checking for duplicate dates and rankings
     const dateStrings = values.days.map(
       (day) => day.date.toISOString().split("T")[0],
@@ -74,6 +75,7 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
             message: "Duplicate dates",
           });
         }
+        isError = true;
       });
     }
 
@@ -91,11 +93,12 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
             type: "manual",
             message: "Duplicate rankings",
           });
+          isError = true;
         }
       });
     }
 
-    if (Object.keys(form.formState.errors).length > 0) {
+    if (Object.keys(form.formState.errors).length > 0 || isError) {
       console.log(form.formState.errors);
       return;
     }

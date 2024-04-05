@@ -11,15 +11,15 @@ import {
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 
 type CustomCalendarProps = {
-  allParticipants: string[];
-  timeslotDensity: Record<string, string[]>;
-  selectedDays: Date[];
+  allParticipants?: string[];
+  timeslotDensity?: Record<string, string[]>;
+  selectedDays?: Date[];
 };
 
 const CustomCalendar: React.FC<CustomCalendarProps> = ({
-  allParticipants,
-  timeslotDensity,
-  selectedDays,
+  allParticipants = [],
+  timeslotDensity = {},
+  selectedDays = [],
 }) => {
   const getGroup = (count: number) => {
     if (allParticipants.length === 0) return "group-0";
@@ -95,7 +95,6 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
           if (dayRender.activeModifiers.selected) {
             const dateKey = `${props.date.toISOString().split("T")[0]}T00:00:00`;
             const timeslotSubmitters = timeslotDensity[dateKey];
-            console.log("timeslotSubmitters", timeslotSubmitters);
             return (
               <TooltipProvider>
                 <Tooltip>

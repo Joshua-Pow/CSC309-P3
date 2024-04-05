@@ -11,23 +11,15 @@ import {
 } from "@/components/ui/card";
 import axiosInstance from "@/lib/axiosUtil";
 import { Calendar } from "@/components/ui/calendar";
-import { Link, PencilIcon, PlusIcon, Trash2 } from "lucide-react";
+import { Link, PencilIcon, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import CreateCalendar from "@/components/CreateCalendar";
 import CustomCalendar from "@/components/CustomCalendar";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useIntersection } from "@mantine/hooks";
 import { Icons } from "@/components/Icons";
+import CreateCalendarCard from "@/components/CreateCalendarCard";
 
 type Participant = {
   id: number;
@@ -74,9 +66,9 @@ export type CreateCalendarValues = {
   }[];
 };
 
-const Schedule = () => {
-  const [calendars, setCalendars] = useState<Calendar[]>([]);
-  const { isLoggedIn } = useAuth();
+const Calendars = () => {
+  const [createCalendarOpen, setCreateCalendarOpen] = useState(false);
+  const { isLoggedIn, userDetails } = useAuth();
   const queryClient = useQueryClient();
   const router = useRouter();
   const itemsPerPage = 10;
@@ -131,27 +123,36 @@ const Schedule = () => {
   const onCalendarCreate = async (values: CreateCalendarValues) => {
     await axiosInstance.post("/calendars/", values);
     // Invalidate the 'calendars' query to refetch data and ensure consistency
-    queryClient.invalidateQueries({ queryKey: ["calendars"] });
+    queryClient.invalidateQueries({ queryKey: ["calendars"] }).then(() => {
+      setCreateCalendarOpen(false);
+    });
   };
 
   //Any participant can leave a calendar
   const onCalendarLeave = async (calendarId: number) => {
-    await axiosInstance.delete(`/calendars/${calendarId}/leave/`);
-    setCalendars((prevCalendars) =>
-      prevCalendars.filter((calendar) => calendar.id !== calendarId),
-    );
+    await axiosInstance.delete(`/calendars/${calendarId}/`);
+    queryClient.invalidateQueries({ queryKey: ["calendars"] }).then(() => {
+      setCreateCalendarOpen(false);
+    });
   };
 
   if (!isLoggedIn) {
     return null;
   }
-
+  console.log("userDetails", userDetails);
   return (
     <div className="flex flex-col items-center p-4 pb-[4.75rem] pt-7">
       <h2 className="scroll-m-20 border-b pb-2 text-center text-3xl font-semibold tracking-tight first:mt-0">
         Create, Edit or View your calendars
       </h2>
       <div className="mt-8 grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <CreateCalendarCard
+          isFetchingNextPage={isFetchingNextPage}
+          isLoading={isLoading}
+          createCalendarOpen={createCalendarOpen}
+          setCreateCalendarOpen={setCreateCalendarOpen}
+          onCalendarCreate={onCalendarCreate}
+        />
         {data?.pages.map((page) =>
           page.results.map((calendar) => (
             <Card key={calendar.id}>
@@ -201,17 +202,31 @@ const Schedule = () => {
                 <Button
                   variant="secondary"
                   disabled={isFetchingNextPage || isLoading}
+                  onClick={() => {
+                    if (userDetails?.username === calendar.creator_username) {
+                      onCalendarDelete(calendar.id);
+                    } else {
+                      onCalendarLeave(calendar.id);
+                    }
+                  }}
                   size="icon"
                 >
-                  <Trash2
-                    size={24}
-                    onClick={() => onCalendarDelete(calendar.id)}
-                  />
+                  <Trash2 size={24} />
                 </Button>
-                <Button variant="outline" size="icon">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() =>
+                    router.push(`/calendars/${calendar.id}/invitations`)
+                  }
+                  disabled={userDetails?.username !== calendar.creator_username}
+                >
                   <Link size={24} />
                 </Button>
-                <Button variant="outline" size="icon">
+                <Button
+                  size="icon"
+                  onClick={() => router.push(`/calendars/${calendar.id}`)}
+                >
                   <PencilIcon size={24} />
                 </Button>
               </CardFooter>
@@ -223,33 +238,10 @@ const Schedule = () => {
             <Icons.spinner className="h-12 w-12 animate-spin" />
           </div>
         )}
-        <div className="flex flex-wrap content-center justify-center">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={isFetchingNextPage}
-              >
-                <PlusIcon size={24} />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Create a new calendar</DialogTitle>{" "}
-                <DialogDescription>
-                  Input details to create a new calendar to schedule events,
-                  click submit when done.
-                </DialogDescription>
-              </DialogHeader>
-              <CreateCalendar onCalendarCreate={onCalendarCreate} />
-            </DialogContent>
-          </Dialog>
-        </div>
       </div>
       <div ref={ref} /> {/* This is the element we observe */}
     </div>
   );
 };
 
-export default Schedule;
+export default Calendars;

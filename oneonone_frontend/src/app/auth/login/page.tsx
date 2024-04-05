@@ -47,7 +47,7 @@ export default function LoginPage() {
       const response = await loginUser(values);
       const { access, refresh, ...userDetails } = response.data;
 
-      login(access, refresh, userDetails);
+      login(access, refresh, { username: values.username, ...userDetails });
     } catch (error) {
       console.error("Error logging in:", error);
     }
