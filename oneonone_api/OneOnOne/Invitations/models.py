@@ -25,5 +25,4 @@ class Invitation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ("calendar", "invitee")
         ordering = ["-updated_at"]

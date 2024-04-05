@@ -125,7 +125,6 @@ class InvitationChangeStatusAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         invitation = self.get_object()
-        print(invitation)
 
         if invitation.inviter != request.user:
             raise PermissionDenied(

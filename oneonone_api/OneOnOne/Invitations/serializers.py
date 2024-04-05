@@ -6,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from drf_spectacular.utils import (
     extend_schema_field,
 )
+from Calendars.models import Participant
 
 
 class InvitationCreateSerializer(serializers.ModelSerializer):
@@ -30,18 +31,21 @@ class InvitationCreateSerializer(serializers.ModelSerializer):
         if calendar.creator == invitee:
             raise PermissionDenied("You cannot send an invitation to yourself.")
 
-        # Check if an invitation already exists with statuses 'accepted' or 'rejected'
+        # Check if an invitation already exists with statuses 'pending' or if the user is already a participant of the calendar
         calendar_id = (
             self.context["request"].parser_context["kwargs"].get("calendar_id")
         )
         if Invitation.objects.filter(
-            invitee=invitee, calendar_id=calendar_id, status__in=["accepted", "pending"]
+            invitee=invitee, calendar_id=calendar_id, status__in=["pending"]
         ).exists():
             raise serializers.ValidationError(
-                "An invitation has already been sent to that users."
+                "An invitation has already been sent to that user."
+            )
+        if Participant.objects.filter(user=invitee, calendar=calendar).exists():
+            raise serializers.ValidationError(
+                "This user is already a participant of this calendar."
             )
 
-        print(validated_data)
         invitation = Invitation.objects.create(**validated_data, invitee=invitee)
         return invitation
 

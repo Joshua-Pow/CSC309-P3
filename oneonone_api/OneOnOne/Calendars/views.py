@@ -10,6 +10,9 @@ from drf_spectacular.utils import extend_schema_view, extend_schema
 from drf_spectacular.utils import OpenApiResponse
 from rest_framework.exceptions import PermissionDenied
 from django.db.models import Q
+from rest_framework.response import Response
+from rest_framework import status
+from TimeSlots.models import TimeSlot
 
 
 @extend_schema_view(
@@ -81,8 +84,19 @@ class CalendarRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
     def destroy(self, request, *args, **kwargs):
         calendar = self.get_object()
-        if calendar.creator != request.user:
+        user = request.user
+        is_creator = calendar.creator == user
+        is_participant = calendar.participants.filter(user=user).exists()
+
+        if is_creator:
+            return super().destroy(request, *args, **kwargs)
+        elif is_participant:
+            # Remove user from participants
+            calendar.participants.filter(user=user).delete()
+            # Delete all timeslots owned by this user in this calendar
+            TimeSlot.objects.filter(day__calendar=calendar, owner=user).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
             raise PermissionDenied(
                 "You do not have permission to delete this calendar."
             )
-        return super().destroy(request, *args, **kwargs)
