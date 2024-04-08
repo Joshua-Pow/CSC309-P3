@@ -56,16 +56,24 @@ axiosInstance.interceptors.response.use(
         const refreshResponse = await axiosInstance.post("auth/refresh/", {
           refresh: refreshToken,
         });
+        if (refreshResponse.status === 401) {
+          console.error("Invalid refresh token.");
+          // Redirect to login page
+          window.dispatchEvent(new CustomEvent("refreshTokenFailed"));
+          return Promise.reject(error);
+        } else if (refreshResponse.status !== 200) {
+          console.error("Error refreshing token.");
+          return Promise.reject(error);
+        }
         const { access } = refreshResponse.data;
         localStorage.setItem("accessToken", access);
         originalRequest.headers["Authorization"] = "Bearer " + access;
         return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        console.error("Error refreshing token:", refreshError);
-        // If refresh token is expired, redirect to login page
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+        // Redirect to login page
         window.dispatchEvent(new CustomEvent("refreshTokenFailed"));
-        window.location.href = "/auth/login";
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       }
     }
     return Promise.reject(error);
