@@ -17,12 +17,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    firstName = serializers.CharField(write_only=True, required=True)
+    lastName = serializers.CharField(write_only=True, required=True)
     password = serializers.CharField(write_only=True, required=True)
     password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ["username", "email", "password", "password2"]
+        fields = ["username", "firstName", "lastName", "email", "password", "password2"]
         extra_kwargs = {
             "password": {"write_only": True},
             "password2": {"write_only": True},
@@ -43,9 +45,13 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Correctly remove the password2 field from the validated data
         validated_data.pop("password2", None)
+        first_name = validated_data.pop("firstName", None)  # Pop firstName
+        last_name = validated_data.pop("lastName", None)  # Pop lastName
         # Create a new user instance
         user = User.objects.create_user(
             username=validated_data["username"],
+            first_name=first_name,
+            last_name=last_name,
             email=validated_data["email"],
             password=validated_data["password"],
         )
