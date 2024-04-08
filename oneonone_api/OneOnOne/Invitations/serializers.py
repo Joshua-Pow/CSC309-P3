@@ -7,6 +7,8 @@ from drf_spectacular.utils import (
     extend_schema_field,
 )
 from Calendars.models import Participant
+from Contacts.models import Contact
+from django.db.models import Q
 
 
 class InvitationCreateSerializer(serializers.ModelSerializer):
@@ -30,6 +32,12 @@ class InvitationCreateSerializer(serializers.ModelSerializer):
         # Check if the invitee is the same as the inviter
         if calendar.creator == invitee:
             raise PermissionDenied("You cannot send an invitation to yourself.")
+        # Check if the invitee is a friend of the inviter
+        if not Contact.objects.filter(
+            Q(userA=calendar.creator, userB=invitee)
+            | Q(userA=invitee, userB=calendar.creator)
+        ).exists():
+            raise PermissionDenied("You can only send invitations to friends.")
 
         # Check if an invitation already exists with statuses 'pending' or if the user is already a participant of the calendar
         calendar_id = (
@@ -102,4 +110,5 @@ class InvitationSerializer(serializers.ModelSerializer):
             "inviter_username",
             "inviter",
             "status",
+            "updated_at",
         ]
