@@ -79,7 +79,14 @@ class ContactViewSet(viewsets.ModelViewSet):
                 friend_ids.add(contact.userA_id)
         friends = User.objects.filter(id__in=friend_ids)
         friends_cleaned = [
-            {"id": friend.id, "username": friend.username} for friend in friends
+            {
+                "id": friend.id,
+                "username": friend.username,
+                "email": friend.email,
+                "firstName": friend.first_name,
+                "lastName": friend.last_name,
+            }
+            for friend in friends
         ]
         return Response(friends_cleaned)
 
