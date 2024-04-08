@@ -16,7 +16,7 @@ const CreateCalendarButtonContents = () => {
     <>
       <div className="relative text-left">
         <div className="absolute inset-0 z-10 rounded-lg bg-background/50  group-hover:bg-accent/50"></div>
-        <Card>
+        <Card className="border-0">
           <CardHeader>
             <CardTitle>Example Title</CardTitle>
             <CardDescription>Example Description</CardDescription>

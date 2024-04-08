@@ -1,25 +1,15 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import axiosInstance from "@/lib/axiosUtil";
 import { Calendar } from "@/components/ui/calendar";
-import { Link, PencilIcon, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import CustomCalendar from "@/components/CustomCalendar";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useIntersection } from "@mantine/hooks";
 import { Icons } from "@/components/Icons";
 import CreateCalendarCard from "@/components/CreateCalendarCard";
+import CustomCalendarCard from "@/components/CustomCalendarCard";
 
 type Participant = {
   id: number;
@@ -41,7 +31,7 @@ type Day = {
   timeslots: Timeslot[] | null;
 };
 
-type Calendar = {
+export type Calendar = {
   id: number;
   creator_username: string;
   title: string;
@@ -50,7 +40,7 @@ type Calendar = {
   participants: Participant[];
 };
 
-type CalendarApiResponse = {
+export type CalendarApiResponse = {
   count: number;
   next: string | null;
   previous: string | null;
@@ -155,82 +145,15 @@ const Calendars = () => {
         />
         {data?.pages.map((page) =>
           page.results.map((calendar) => (
-            <Card key={calendar.id}>
-              <CardHeader>
-                <CardTitle>
-                  {calendar.title} - {calendar.id}
-                </CardTitle>
-                <CardDescription>{calendar.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CustomCalendar
-                  allParticipants={calendar.participants.map(
-                    (participant) => participant.username,
-                  )}
-                  timeslotDensity={calendar.days.reduce(
-                    (acc, day) => {
-                      const dateKey = `${day.date}T00:00:00`;
-                      const uniqueUsernames = day.timeslots
-                        ? Array.from(
-                            new Set(
-                              day.timeslots.map(
-                                (timeslot) => timeslot.owner_username,
-                              ),
-                            ),
-                          )
-                        : [];
-                      acc[dateKey] = uniqueUsernames;
-                      return acc;
-                    },
-                    {} as Record<string, string[]>,
-                  )}
-                  selectedDays={calendar.days.map(
-                    (day) => new Date(`${day.date}T00:00:00`),
-                  )}
-                />
-                <p>Host: {calendar.creator_username}</p>
-                <p>Participants:</p>
-                {calendar.participants.map((participant) => (
-                  <p key={participant.id}>{participant.username}</p>
-                ))}
-                <p>Days:</p>
-                {calendar.days.map((day) => (
-                  <p key={day.id}>{day.date}</p>
-                ))}
-              </CardContent>
-              <CardFooter className="flex items-center justify-between">
-                <Button
-                  variant="secondary"
-                  disabled={isFetchingNextPage || isLoading}
-                  onClick={() => {
-                    if (userDetails?.username === calendar.creator_username) {
-                      onCalendarDelete(calendar.id);
-                    } else {
-                      onCalendarLeave(calendar.id);
-                    }
-                  }}
-                  size="icon"
-                >
-                  <Trash2 size={24} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() =>
-                    router.push(`/calendars/${calendar.id}/invitations`)
-                  }
-                  disabled={userDetails?.username !== calendar.creator_username}
-                >
-                  <Link size={24} />
-                </Button>
-                <Button
-                  size="icon"
-                  onClick={() => router.push(`/calendars/${calendar.id}`)}
-                >
-                  <PencilIcon size={24} />
-                </Button>
-              </CardFooter>
-            </Card>
+            <CustomCalendarCard
+              key={calendar.id}
+              calendar={calendar}
+              userDetails={userDetails}
+              isLoading={isFetchingNextPage || isLoading}
+              hideActions={false}
+              onCalendarDelete={onCalendarDelete}
+              onCalendarLeave={onCalendarLeave}
+            />
           )),
         )}
         {(isFetchingNextPage || isLoading) && (

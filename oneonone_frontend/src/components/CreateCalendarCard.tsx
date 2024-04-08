@@ -33,7 +33,7 @@ const CreateCalendarCard = ({
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="group"
+            className="group h-auto w-auto"
             size="icon"
             disabled={isFetchingNextPage || isLoading}
           >
