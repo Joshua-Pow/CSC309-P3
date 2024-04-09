@@ -1,19 +1,20 @@
 import React, { useState } from "react";
 import CreateCalendarForm from "@/components/CreateCalendarForm";
 import { Calendar, CreateCalendarValues } from "../page";
-import CustomCalendar from "@/components/CustomCalendar";
 import CustomCalendarCard from "@/components/CustomCalendarCard";
 import axiosInstance from "@/lib/axiosUtil";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 type props = {
   calendarValues: Calendar;
 };
 
 const Owner = ({ calendarValues }: props) => {
+  const queryClient = useQueryClient();
   const [calendar, setCalendar] = useState<Calendar>(calendarValues);
+
   const onCalendarSave = async (calendarData: CreateCalendarValues) => {
-    console.log("calendarData", calendarData);
     const updatedCalendar = {
       ...calendar,
       title: calendarData.title,
@@ -27,18 +28,20 @@ const Owner = ({ calendarValues }: props) => {
         ranking: day.ranking,
       })),
     };
-    console.log("updatedCalendar", updatedCalendar);
+
     axiosInstance
       .put(`/calendars/${calendar.id}/`, updatedCalendar)
       .then((res) => {
-        if (res.status === 200) toast.success("Calendar updated successfully");
-        else toast.error("Failed to update calendar");
-        console.log("Calendar updated successfully", res);
+        if (res.status === 200) {
+          toast.success("Calendar updated successfully");
+          // Invalidate the 'calendars' query to refetch data and ensure consistency
+          setCalendar(updatedCalendar);
+          queryClient.invalidateQueries({ queryKey: ["calendars"] });
+        } else {
+          toast.error("Failed to update calendar");
+        }
       });
-    setCalendar(updatedCalendar);
   };
-  console.log("calendarValues", calendarValues);
-  console.log("calendar", calendar);
 
   return (
     <div className="flex flex-col items-center p-4 pb-[4.75rem] pt-7">

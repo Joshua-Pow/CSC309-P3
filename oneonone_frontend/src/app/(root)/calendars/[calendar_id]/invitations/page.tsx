@@ -59,7 +59,7 @@ export default function CalendarInvitations({ params }: Props) {
     queryKey: ["calendar", calendar_id],
     queryFn: fetchCalendarDetails,
   });
-  console.log("calendarDetails", calendarDetails);
+
   return (
     <div className="flex flex-col items-center p-4 pb-[4.75rem] pt-7">
       <h2 className="mb-10 scroll-m-20 border-b pb-2 text-center text-3xl font-semibold tracking-tight first:mt-0">

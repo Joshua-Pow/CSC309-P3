@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Calendar, Day, Participant
 from TimeSlots.serializers import TimeSlotSerializer
-from django.contrib.auth.models import User
+from django.db.models import Max
 
 
 class ParticipantSerializer(serializers.ModelSerializer):
@@ -17,6 +17,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
 
 class DaySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     timeslots = TimeSlotSerializer(many=True, read_only=True)
 
     class Meta:
@@ -109,9 +110,47 @@ class CalendarEditSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get("title", instance.title)
         instance.description = validated_data.get("description", instance.description)
         instance.save()
-
         if days_data is not None:
-            instance.days.all().delete()  # Remove existing days
-            for day_data in days_data:
-                Day.objects.create(calendar=instance, **day_data)
+            # Collect IDs of days that are meant to be updated
+            update_day_ids = [
+                day_data.get("id") for day_data in days_data if day_data.get("id")
+            ]
+
+            # Delete days that are not in the update payload
+            instance.days.exclude(id__in=update_day_ids).delete()
+
+            # Temporarily set rankings to a safe value
+            max_ranking = (
+                Day.objects.filter(calendar=instance).aggregate(Max("ranking"))[
+                    "ranking__max"
+                ]
+                or 0
+            )
+
+            temp_ranking_start = max_ranking + 1
+            for i, day_data in enumerate(days_data):
+                day_id = day_data.get("id", None)
+                temp_ranking = temp_ranking_start + i
+                if day_id:
+                    # Temporarily update existing day with a safe ranking, ensuring 'ranking' is not duplicated
+                    Day.objects.filter(id=day_id, calendar=instance).update(
+                        ranking=temp_ranking, date=day_data["date"]
+                    )
+                else:
+                    # Create new day since it doesnt have an ID
+                    Day.objects.create(
+                        calendar=instance,
+                        ranking=day_data["ranking"],
+                        date=day_data["date"],
+                    )
+
+            # Now, update to the intended rankings
+            for i, day_data in enumerate(days_data):
+                day_id = day_data.get("id", None)
+                if day_id:
+                    # Ensure 'ranking' is not duplicated when updating
+                    Day.objects.filter(id=day_id, calendar=instance).update(
+                        ranking=day_data["ranking"]
+                    )
+
         return super().update(instance, validated_data)
