@@ -17,7 +17,6 @@ import { UserDetails } from "@/context/AuthContext";
 type PropsWithoutFooter = {
   hideActions: true;
   calendar: Calendar;
-  userDetails: UserDetails;
 };
 
 type PropsWithFooter = {
@@ -31,12 +30,7 @@ type PropsWithFooter = {
 
 type Props = PropsWithoutFooter | PropsWithFooter;
 
-const CustomCalendarCard = ({
-  calendar,
-  hideActions,
-  userDetails,
-  ...props
-}: Props) => {
+const CustomCalendarCard = ({ calendar, hideActions, ...props }: Props) => {
   const router = useRouter();
   return (
     <Card className="max-w-[324px]" key={calendar.id}>
@@ -86,7 +80,7 @@ const CustomCalendarCard = ({
             variant="secondary"
             disabled={(props as PropsWithFooter).isLoading}
             onClick={() => {
-              if (userDetails?.username === calendar.creator_username) {
+              if (props.userDetails?.username === calendar.creator_username) {
                 (props as PropsWithFooter).onCalendarDelete(calendar.id);
               } else {
                 (props as PropsWithFooter).onCalendarLeave(calendar.id);
@@ -100,7 +94,7 @@ const CustomCalendarCard = ({
             variant="outline"
             size="icon"
             onClick={() => router.push(`/calendars/${calendar.id}/invitations`)}
-            disabled={userDetails?.username !== calendar.creator_username}
+            disabled={props.userDetails?.username !== calendar.creator_username}
           >
             <Link size={24} />
           </Button>

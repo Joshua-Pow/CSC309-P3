@@ -8,8 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/context/AuthContext";
 import axiosInstance from "@/lib/axiosUtil";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Calendar, CalendarApiResponse } from "../../page";
+import { Calendar } from "../../page";
 
 type Props = {
   params: {
@@ -33,7 +32,6 @@ export default function CalendarInvitations({ params }: Props) {
       await axiosInstance.get<InvitationApiResponse>(
         `/calendars/${calendar_id}/invitations/`,
       );
-
     return invitations;
   };
 

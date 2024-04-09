@@ -19,6 +19,7 @@ import { CreateCalendarValues } from "@/app/(root)/calendars/page";
 
 type Props = {
   onCalendarCreate: (calendarData: CreateCalendarValues) => Promise<void>;
+  initialData?: Calendar;
 };
 
 const calendarSchema = z.object({
@@ -46,11 +47,21 @@ function formatDate(date: Date) {
   return [year, month, day].join("-");
 }
 
-const CreateCalendar = ({ onCalendarCreate }: Props) => {
+const CreateCalendarForm = ({ onCalendarCreate, initialData }: Props) => {
   const form = useForm<Calendar>({
     resolver: zodResolver(calendarSchema),
     mode: "onChange",
     reValidateMode: "onChange",
+    defaultValues: initialData
+      ? {
+          title: initialData.title,
+          description: initialData.description,
+          days: initialData.days.map((day) => ({
+            date: day.date, // Ensure the date is in Date object format
+            ranking: day.ranking,
+          })),
+        }
+      : {},
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -163,8 +174,8 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
                         <FormControl>
                           <Input
                             type="number"
-                            className="overflow-visible"
                             {...field}
+                            className="w-[80px]"
                             value={field.value.toString()}
                             onChange={(e) => {
                               field.onChange(parseInt(e.target.value, 10) || 0);
@@ -179,7 +190,7 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
                     control={form.control}
                     name={`days.${index}.date`}
                     render={({ field }) => (
-                      <FormItem className="min-h-[100px]">
+                      <FormItem className="min-h-[100px] max-w-[240px]">
                         <FormLabel className="font-semibold">Date</FormLabel>
                         <DatePicker field={field} />
                         <FormMessage />
@@ -207,6 +218,7 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
                           <Input
                             type="number"
                             {...field}
+                            className="w-[80px]"
                             value={field.value.toString()}
                             onChange={(e) => {
                               field.onChange(parseInt(e.target.value, 10) || 0);
@@ -267,4 +279,4 @@ const CreateCalendar = ({ onCalendarCreate }: Props) => {
   );
 };
 
-export default CreateCalendar;
+export default CreateCalendarForm;
