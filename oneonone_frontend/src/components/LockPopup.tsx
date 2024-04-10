@@ -8,7 +8,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { LockOpen, Lock, CalendarIcon, Clock } from "lucide-react";
+import { LockOpen, Lock, CalendarIcon, Clock, Info } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +30,12 @@ import axiosInstance from "@/lib/axiosUtil";
 import { toast } from "sonner";
 import { queryClient } from "@/lib/queryClient";
 import LockCalendarButton from "./LockCalendarButton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 type Props = {
   calendarId: number;
@@ -136,9 +142,25 @@ function LockPopup({ calendarId, disabled, isLocked, recommendedTime }: Props) {
         </DialogDescription>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-              Recomended time:
-            </h4>
+            <div className="flex items-center gap-2">
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                Recommended time:
+              </h4>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info size={24} strokeWidth={1.5} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-[200px] text-balance text-center text-sm font-medium leading-none">
+                      Based on 1 hour window where most particpants are
+                      available and your day rankings
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
             <p className="leading-7">
               {typeof recommendedTime === "string"
                 ? recommendedTime
