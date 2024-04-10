@@ -2,8 +2,13 @@ from django.urls import path
 from .views import (
     CalendarListCreateAPIView,
     CalendarRetrieveUpdateDestroyAPIView,
+    FinalizeCalendarView,
 )
-from Invitations.views import InvitationListCreateAPIView, InvitationChangeStatusAPIView, InvitationListAPIView
+from Invitations.views import (
+    InvitationListCreateAPIView,
+    InvitationChangeStatusAPIView,
+    InvitationListAPIView,
+)
 from TimeSlots.views import (
     TimeSlotListCreateAPIView,
     TimeSlotRetrieveUpdateDestroyAPIView,
@@ -15,6 +20,11 @@ urlpatterns = [
         "<int:pk>/",
         CalendarRetrieveUpdateDestroyAPIView.as_view(),
         name="calendars_retrieve_update_delete",
+    ),
+    path(
+        "<int:pk>/finalize/",
+        FinalizeCalendarView.as_view(),
+        name="finalize-calendar",
     ),
     path(
         "<int:calendar_id>/day/<int:day_id>/timeslot/",

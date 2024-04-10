@@ -4,6 +4,7 @@ from .serializers import (
     CalendarSerializer,
     CalendarCreateSerializer,
     CalendarEditSerializer,
+    FinalizeCalendarSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema_view, extend_schema
@@ -13,6 +14,16 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework import status
 from TimeSlots.models import TimeSlot
+
+
+class FinalizeCalendarView(generics.UpdateAPIView):
+    queryset = Calendar.objects.all()
+    serializer_class = FinalizeCalendarSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_update(self, serializer):
+        serializer.instance.is_finalized = True
+        super().perform_update(serializer)
 
 
 @extend_schema_view(

@@ -10,6 +10,18 @@ class Calendar(models.Model):
     creator = models.ForeignKey(
         User, related_name="created_calendars", on_delete=models.CASCADE
     )
+    is_finalized = models.BooleanField(default=False)
+    final_date = models.DateField(
+        null=True, blank=True
+    )  # The final date for the calendar
+    final_timeslot_start = models.TimeField(
+        null=True,
+        blank=True,
+    )  # Reference to a Timeslot model
+    final_timeslot_end = models.TimeField(
+        null=True,
+        blank=True,
+    )  # Reference to a Timeslot model
 
     class Meta:
         ordering = ["-updated_at"]

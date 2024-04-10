@@ -4,6 +4,24 @@ from TimeSlots.serializers import TimeSlotSerializer
 from django.db.models import Max
 
 
+class FinalizeCalendarSerializer(serializers.ModelSerializer):
+    final_date = serializers.DateField()
+    final_timeslot_start = serializers.TimeField(format="%H:%M")
+    final_timeslot_end = serializers.TimeField(format="%H:%M")
+
+    class Meta:
+        model = Calendar
+        fields = ["final_date", "final_timeslot_start", "final_timeslot_end"]
+
+    def update(self, instance, validated_data):
+        instance.final_date = validated_data.get("final_date")
+        instance.final_timeslot_start = validated_data.get("final_timeslot_start")
+        instance.final_timeslot_end = validated_data.get("final_timeslot_end")
+        instance.is_finalized = True
+        instance.save()
+        return instance
+
+
 class ParticipantSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
     email = serializers.EmailField(source="user.email")
@@ -65,6 +83,10 @@ class CalendarSerializer(serializers.ModelSerializer):
         model = Calendar
         fields = [
             "id",
+            "is_finalized",
+            "final_date",
+            "final_timeslot_start",
+            "final_timeslot_end",
             "creator_username",
             "title",
             "description",
