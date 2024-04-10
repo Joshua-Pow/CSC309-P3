@@ -16,6 +16,7 @@ import DeleteCalendarButton from "./DeleteCalendarButton";
 import ShareCalendarButton from "./ShareCalendarButton";
 import DownloadCalendarButton from "./DownloadCalendarButton";
 import EditCalendarButton from "./EditCalendarButton";
+import { EventStatus, ParticipationRole, createEvent } from "ics";
 
 type PropsWithoutFooter = {
   hideActions: true;
@@ -49,7 +50,7 @@ const getRecommendedTime = (calendar: Calendar) => {
     if (currentUniqueParticipants > prevUniqueParticipants) {
       return current;
     } else if (currentUniqueParticipants === prevUniqueParticipants) {
-      return current.ranking > prev.ranking ? current : prev;
+      return current.ranking < prev.ranking ? current : prev;
     }
     return prev;
   }, calendar.days[0]);
@@ -89,6 +90,60 @@ const getRecommendedTime = (calendar: Calendar) => {
       .substring(0, 5),
     endTime: recommendedEndTime.toTimeString().split(" ")[0].substring(0, 5),
   };
+};
+
+const downloadICS = async (calendar: Calendar, userDetails: UserDetails) => {
+  const date = new Date(String(calendar.final_date));
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate() + 1;
+
+  const start_time = new Date("2000-01-01T" + calendar.final_timeslot_start);
+  const end_time = new Date("2000-01-01T" + calendar.final_timeslot_end);
+  const start_hour = start_time.getHours();
+  const start_minute = start_time.getMinutes();
+  const end_hour = end_time.getHours();
+  const end_minute = end_time.getMinutes();
+  const duration = end_hour * 60 + end_minute - start_hour * 60 + start_minute;
+
+  const event = {
+    start: [year, month, day, start_hour, start_minute] as [
+      number,
+      number,
+      number,
+      number,
+      number,
+    ],
+    duration: { hours: Math.floor(duration / 60), minutes: duration % 60 },
+    title: calendar.title,
+    description: calendar.description,
+    status: "CONFIRMED" as EventStatus,
+    organizer: {
+      name: userDetails.firstName + " " + userDetails.lastName,
+      email: userDetails.email,
+    },
+    attendees: calendar.participants.map((participant) => ({
+      name: participant.username,
+      email: participant.email,
+      role: "OPT-PARTICIPANT" as ParticipationRole,
+    })),
+  };
+
+  const filename = "Event.ics";
+  const file: File = await new Promise((resolve, reject) => {
+    createEvent(event, (error, value) => {
+      if (error) {
+        reject(error);
+      }
+      console.log(value);
+      resolve(new File([value], filename, { type: "text/calendar" }));
+    });
+  });
+  const url = URL.createObjectURL(file);
+  const tempLink = document.createElement("a");
+  tempLink.href = url;
+  tempLink.download = filename;
+  tempLink.click();
 };
 
 const CustomCalendarCard = ({ calendar, hideActions, ...props }: Props) => {
@@ -167,9 +222,7 @@ const CustomCalendarCard = ({ calendar, hideActions, ...props }: Props) => {
           />
           <DownloadCalendarButton
             disabled={!calendar.is_finalized}
-            onClick={() => {
-              console.log("Download");
-            }}
+            onClick={() => downloadICS(calendar, props.userDetails)}
           />
           <EditCalendarButton
             disabled={calendar.is_finalized}
