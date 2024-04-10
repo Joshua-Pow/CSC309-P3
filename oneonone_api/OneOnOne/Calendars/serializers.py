@@ -47,9 +47,23 @@ class CalendarSerializer(serializers.ModelSerializer):
     days = DaySerializer(many=True)
     creator_username = serializers.SerializerMethodField()
     participants = ParticipantSerializer(many=True, required=False, allow_null=True)
+    final_timeslot_start = serializers.SerializerMethodField()
+    final_timeslot_end = serializers.SerializerMethodField()
 
     def get_creator_username(self, obj) -> str:
         return obj.creator.username
+
+    def get_final_timeslot_start(self, obj) -> str:
+        return (
+            obj.final_timeslot_start.strftime("%H:%M")
+            if obj.final_timeslot_start
+            else None
+        )
+
+    def get_final_timeslot_end(self, obj) -> str:
+        return (
+            obj.final_timeslot_end.strftime("%H:%M") if obj.final_timeslot_end else None
+        )
 
     def create(self, validated_data):
         days_data = validated_data.pop("days")
