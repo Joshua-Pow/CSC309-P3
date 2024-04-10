@@ -56,7 +56,7 @@ function CalendarDetails({ params }: Props) {
       {userRole === "owner" ? (
         <Owner calendarValues={calendarDetails} />
       ) : (
-        <Participant />
+        <Participant calendarValues={calendarDetails} />
       )}
     </>
   );

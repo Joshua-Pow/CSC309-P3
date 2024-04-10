@@ -24,7 +24,16 @@ type Timeslot = {
   owner_username: string;
 };
 
-type Day = {
+type CreateTimeslot = {
+  start_time: Date;
+  end_time: Date;
+};
+
+export type CreateTimeSlotValues = {
+  timeslots: CreateTimeslot[] | null;
+};
+
+export type Day = {
   id: number;
   date: string;
   ranking: number;
