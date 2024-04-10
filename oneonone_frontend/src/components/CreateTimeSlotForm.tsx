@@ -72,179 +72,91 @@ const CreateTimeSlotForm = ({
     onTimeSlotCreate(modifiedData, dayId);
   };
   return (
-    <AccordionContent>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col space-y-4"
-        >
-          <div className="p-1">
-            {fields.map((field, index) => (
-              <div key={field.id} className="mb-5 flex items-end gap-4">
-                {index === 0 ? (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name={`timeslots.${index}.start_time`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel className="text-left">
-                            Start time
-                          </FormLabel>
-                          <Popover>
-                            <FormControl>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "w-[140px] justify-start text-left font-normal",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {field.value ? (
-                                    format(field.value, "HH:mm")
-                                  ) : (
-                                    <span>Pick a time</span>
-                                  )}
-                                </Button>
-                              </PopoverTrigger>
-                            </FormControl>
-                            <PopoverContent className="w-auto p-0">
-                              <div className="border-t border-border p-3">
-                                <TimePicker
-                                  date={field.value}
-                                  setDate={field.onChange}
-                                />
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`timeslots.${index}.end_time`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <FormLabel className="text-left">End time</FormLabel>
-                          <Popover>
-                            <FormControl>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "w-[140px] justify-start text-left font-normal",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {field.value ? (
-                                    format(field.value, "HH:mm")
-                                  ) : (
-                                    <span>Pick a time</span>
-                                  )}
-                                </Button>
-                              </PopoverTrigger>
-                            </FormControl>
-                            <PopoverContent className="w-auto p-0">
-                              <div className="border-t border-border p-3">
-                                <TimePicker
-                                  date={field.value}
-                                  setDate={field.onChange}
-                                />
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </FormItem>
-                      )}
-                    />
-                    <div>
-                      <Button
-                        type="button"
-                        className="self-center px-2"
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => remove(index)}
-                      >
-                        <Trash />
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name={`timeslots.${index}.start_time`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <Popover>
-                            <FormControl>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "w-[140px] justify-start text-left font-normal",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {field.value ? (
-                                    format(field.value, "HH:mm")
-                                  ) : (
-                                    <span>Pick a time</span>
-                                  )}
-                                </Button>
-                              </PopoverTrigger>
-                            </FormControl>
-                            <PopoverContent className="w-auto p-0">
-                              <div className="border-t border-border p-3">
-                                <TimePicker
-                                  date={field.value}
-                                  setDate={field.onChange}
-                                />
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name={`timeslots.${index}.end_time`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                          <Popover>
-                            <FormControl>
-                              <PopoverTrigger asChild>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "w-[140px] justify-start text-left font-normal",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  <CalendarIcon className="mr-2 h-4 w-4" />
-                                  {field.value ? (
-                                    format(field.value, "HH:mm")
-                                  ) : (
-                                    <span>Pick a time</span>
-                                  )}
-                                </Button>
-                              </PopoverTrigger>
-                            </FormControl>
-                            <PopoverContent className="w-auto p-0">
-                              <div className="border-t border-border p-3">
-                                <TimePicker
-                                  date={field.value}
-                                  setDate={field.onChange}
-                                />
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </FormItem>
-                      )}
-                    />
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col space-y-4"
+      >
+        <div className="p-1">
+          {fields.map((field, index) => (
+            <div key={field.id} className="mb-5 flex items-end gap-4">
+              {index === 0 ? (
+                <>
+                  <FormField
+                    control={form.control}
+                    name={`timeslots.${index}.start_time`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="text-left">Start time</FormLabel>
+                        <Popover>
+                          <FormControl>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[140px] justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground",
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? (
+                                  format(field.value, "HH:mm")
+                                ) : (
+                                  <span>Pick a time</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                          </FormControl>
+                          <PopoverContent className="w-auto p-0">
+                            <div className="border-t border-border p-3">
+                              <TimePicker
+                                date={field.value}
+                                setDate={field.onChange}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`timeslots.${index}.end_time`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel className="text-left">End time</FormLabel>
+                        <Popover>
+                          <FormControl>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[140px] justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground",
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? (
+                                  format(field.value, "HH:mm")
+                                ) : (
+                                  <span>Pick a time</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                          </FormControl>
+                          <PopoverContent className="w-auto p-0">
+                            <div className="border-t border-border p-3">
+                              <TimePicker
+                                date={field.value}
+                                setDate={field.onChange}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <div>
                     <Button
                       type="button"
                       className="self-center px-2"
@@ -254,31 +166,115 @@ const CreateTimeSlotForm = ({
                     >
                       <Trash />
                     </Button>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-          <Button
-            type="button"
-            className="self-center"
-            variant="outline"
-            onClick={() => {
-              append({
-                start_time: new Date(new Date().setHours(0, 0, 0, 0)),
-                end_time: new Date(new Date().setHours(0, 0, 0, 0)),
-              });
-            }}
-          >
-            <PlusIcon className="mr-2 h-4 w-4" />
-            Add a timeslot
-          </Button>
-          <DialogFooter>
-            <Button type="submit">Save</Button>
-          </DialogFooter>
-        </form>
-      </Form>
-    </AccordionContent>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <FormField
+                    control={form.control}
+                    name={`timeslots.${index}.start_time`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <Popover>
+                          <FormControl>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[140px] justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground",
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? (
+                                  format(field.value, "HH:mm")
+                                ) : (
+                                  <span>Pick a time</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                          </FormControl>
+                          <PopoverContent className="w-auto p-0">
+                            <div className="border-t border-border p-3">
+                              <TimePicker
+                                date={field.value}
+                                setDate={field.onChange}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`timeslots.${index}.end_time`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <Popover>
+                          <FormControl>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[140px] justify-start text-left font-normal",
+                                  !field.value && "text-muted-foreground",
+                                )}
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {field.value ? (
+                                  format(field.value, "HH:mm")
+                                ) : (
+                                  <span>Pick a time</span>
+                                )}
+                              </Button>
+                            </PopoverTrigger>
+                          </FormControl>
+                          <PopoverContent className="w-auto p-0">
+                            <div className="border-t border-border p-3">
+                              <TimePicker
+                                date={field.value}
+                                setDate={field.onChange}
+                              />
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="button"
+                    className="self-center px-2"
+                    variant="destructive"
+                    size="icon"
+                    onClick={() => remove(index)}
+                  >
+                    <Trash />
+                  </Button>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+        <Button
+          type="button"
+          className="self-center"
+          variant="outline"
+          onClick={() => {
+            append({
+              start_time: new Date(new Date().setHours(0, 0, 0, 0)),
+              end_time: new Date(new Date().setHours(0, 0, 0, 0)),
+            });
+          }}
+        >
+          <PlusIcon className="mr-2 h-4 w-4" />
+          Add a timeslot
+        </Button>
+        <DialogFooter>
+          <Button type="submit">Save</Button>
+        </DialogFooter>
+      </form>
+    </Form>
   );
 };
 

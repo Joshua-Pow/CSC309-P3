@@ -5,18 +5,21 @@ import { Calendar, CreateTimeSlotValues } from "../page";
 import axiosInstance from "@/lib/axiosUtil";
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import moment from "moment";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/context/AuthContext";
 
 type props = {
   calendarValues: Calendar;
 };
 
 const Participant = ({ calendarValues }: props) => {
+  const { userDetails } = useAuth();
   const queryClient = useQueryClient();
   const [calendar, setCalendar] = useState<Calendar>(calendarValues);
 
@@ -77,16 +80,42 @@ const Participant = ({ calendarValues }: props) => {
               <AccordionTrigger>
                 {moment(day.date).format("MMMM D (dddd)")}
               </AccordionTrigger>
-              <CreateTimeSlotForm
-                onTimeSlotCreate={onTimeSlotSave}
-                initialData={{
-                  timeslots: day.timeslots!.map((timeslot) => ({
-                    start_time: getDate(timeslot.start_time),
-                    end_time: getDate(timeslot.end_time),
-                  })),
-                }}
-                dayId={String(day.id)}
-              />
+              <AccordionContent>
+                <div>
+                  <p className="text-base font-medium leading-none">
+                    Current timeslots:
+                  </p>
+                  <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
+                    {day
+                      .timeslots!.filter(
+                        (timeslot) =>
+                          timeslot.owner_username !== userDetails.username,
+                      )
+                      .map((timeslot) => (
+                        <li key={timeslot.id}>
+                          {timeslot.owner_username} :{" "}
+                          {dateToTime(getDate(timeslot.start_time))} -{" "}
+                          {dateToTime(getDate(timeslot.end_time))}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+                <CreateTimeSlotForm
+                  onTimeSlotCreate={onTimeSlotSave}
+                  initialData={{
+                    timeslots: day
+                      .timeslots!.filter(
+                        (timeslot) =>
+                          timeslot.owner_username === userDetails.username,
+                      )
+                      .map((timeslot) => ({
+                        start_time: getDate(timeslot.start_time),
+                        end_time: getDate(timeslot.end_time),
+                      })),
+                  }}
+                  dayId={String(day.id)}
+                />
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

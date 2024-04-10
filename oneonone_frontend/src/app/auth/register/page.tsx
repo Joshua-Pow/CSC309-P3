@@ -20,21 +20,27 @@ import { registerUser } from "@/lib/axiosUtil";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
-const registerSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  username: z
-    .string()
-    .min(1)
-    .regex(
-      /^[a-zA-Z0-9@.+_-]+$/,
-      "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
-    ),
-  email: z.string().email(),
-  password: z.string().min(8),
-  password2: z.string().min(8),
-});
+const registerSchema = z
+  .object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    username: z
+      .string()
+      .min(1)
+      .regex(
+        /^[a-zA-Z0-9@.+_-]+$/,
+        "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+      ),
+    email: z.string().email(),
+    password: z.string().min(8),
+    password2: z.string().min(8),
+  })
+  .refine((data) => data.password === data.password2, {
+    path: ["password2"],
+    message: "Passwords do not match",
+  });
 
 export type RegisterUser = z.infer<typeof registerSchema>;
 
@@ -48,11 +54,13 @@ export default function RegisterPage() {
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     console.log(values);
-    try {
-      await registerUser(values);
+
+    const res = await registerUser(values).catch((err) =>
+      toast.error(err.response.data.non_field_errors.join(" ")),
+    );
+    if (res.status === 201) {
+      toast.success("User registered successfully");
       router.push("/auth/login");
-    } catch (error) {
-      console.error("Error registering user:", error);
     }
   };
 

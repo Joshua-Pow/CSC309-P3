@@ -15,13 +15,8 @@ axiosInstance.interceptors.request.use((config) => {
 });
 
 export const registerUser = async (userData: RegisterUser) => {
-  try {
-    const response = await axiosInstance.post("auth/register/", userData);
-    return response;
-  } catch (error) {
-    console.error("Error registering user:", error);
-    throw error;
-  }
+  const response = await axiosInstance.post("auth/register/", userData);
+  return response;
 };
 
 export const loginUser = async (credentials: {
