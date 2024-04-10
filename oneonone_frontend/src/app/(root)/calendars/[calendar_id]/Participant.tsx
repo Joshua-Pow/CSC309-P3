@@ -86,18 +86,25 @@ const Participant = ({ calendarValues }: props) => {
                     Current timeslots:
                   </p>
                   <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
-                    {day
-                      .timeslots!.filter(
-                        (timeslot) =>
-                          timeslot.owner_username !== userDetails.username,
-                      )
-                      .map((timeslot) => (
-                        <li key={timeslot.id}>
-                          {timeslot.owner_username} :{" "}
-                          {dateToTime(getDate(timeslot.start_time))} -{" "}
-                          {dateToTime(getDate(timeslot.end_time))}
-                        </li>
-                      ))}
+                    {day.timeslots!.filter(
+                      (timeslot) =>
+                        timeslot.owner_username !== userDetails?.username,
+                    ).length > 0 ? (
+                      day
+                        .timeslots!.filter(
+                          (timeslot) =>
+                            timeslot.owner_username !== userDetails?.username,
+                        )
+                        .map((timeslot) => (
+                          <li key={timeslot.id}>
+                            {timeslot.owner_username} :{" "}
+                            {dateToTime(getDate(timeslot.start_time))} -{" "}
+                            {dateToTime(getDate(timeslot.end_time))}
+                          </li>
+                        ))
+                    ) : (
+                      <li>No timeslots have been added by others yet.</li>
+                    )}
                   </ul>
                 </div>
                 <CreateTimeSlotForm
