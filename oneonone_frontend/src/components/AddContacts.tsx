@@ -90,7 +90,7 @@ const AddContacts = () => {
               >
                 <span className="hidden sm:inline">Add</span>
                 <svg
-                  className="ml-2 h-4 w-4"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -110,7 +110,7 @@ const AddContacts = () => {
               >
                 <span className="hidden sm:inline">Block</span>
                 <svg
-                  className="ml-2 h-4 w-4"
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

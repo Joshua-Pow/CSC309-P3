@@ -63,7 +63,7 @@ const FriendsList = () => {
             >
               <span className="hidden sm:inline">Unadd</span>
               <svg
-                className="ml-2 h-4 w-4"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -84,7 +84,7 @@ const FriendsList = () => {
             >
               <span className="hidden sm:inline">Block</span>
               <svg
-                className="ml-2 h-4 w-4"
+                className="h-4 w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

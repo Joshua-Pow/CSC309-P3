@@ -184,3 +184,39 @@ class InvitationChangeStatusAPIView(generics.RetrieveUpdateDestroyAPIView):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+@extend_schema_view(
+    get=extend_schema(
+        description="Retrieve all pending invitations for the current user",
+        request=None,
+        responses={200: OpenApiResponse(response=InvitationSerializer(many=True))},
+    ),
+)
+class InvitationListAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = InvitationSerializer
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+
+        invitations = Invitation.objects.filter(invitee=user, status="pending")
+
+        print("invitations", invitations)
+
+        data = []
+
+        for invitation in invitations:
+            calendar_id = invitation.calendar.id
+            calendar = get_object_or_404(Calendar, id=calendar_id)
+
+            data.append(
+                {
+                    "id": invitation.id,
+                    "calendar": calendar.title,
+                    "calendar_id": calendar_id,
+                    "inviter": invitation.inviter.username,
+                    "status": invitation.status,
+                }
+            )
+        
+        return Response(data)

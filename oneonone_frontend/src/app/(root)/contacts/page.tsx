@@ -4,8 +4,17 @@ import FriendsList from "@/components/FriendsList";
 import IncomingList from "@/components/IncomingList";
 import OutgoingList from "@/components/OutgoingList";
 import AddContacts from "@/components/AddContacts";
+import GetInvitations from "@/components/GetInvitations";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type Props = {};
 
@@ -30,55 +39,76 @@ const Contacts = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <div className="sticky top-0 z-10 w-full">
-        <main className="flex flex-1 flex-col items-center justify-start p-4">
-          <div className="w-full max-w-2xl justify-center rounded-xl border bg-card p-4 shadow">
-            <h3 className="mb-1 text-center text-2xl font-bold">Contacts</h3>
-            <p className="mb-4 text-center text-sm">
-              Manage all your contacts here.
-            </p>
-            <div className="mb-4 flex justify-center space-x-2">
-              <button
-                className={`rounded-md px-4 py-2 transition-colors duration-300 ease-in-out ${
-                  activeList === "friends"
-                    ? "bg-primary text-white"
-                    : "bg-transparent text-primary hover:bg-primary/10"
-                }`}
-                onClick={() => setActiveList("friends")}
-              >
-                Friends
-              </button>
-              <button
-                className={`rounded-md px-4 py-2 transition-colors duration-300 ease-in-out ${
-                  activeList === "outgoing"
-                    ? "bg-primary text-white"
-                    : "bg-transparent text-primary hover:bg-primary/10"
-                }`}
-                onClick={() => setActiveList("outgoing")}
-              >
-                Outgoing
-              </button>
-              <button
-                className={`rounded-md px-4 py-2 transition-colors duration-300 ease-in-out ${
-                  activeList === "incoming"
-                    ? "bg-primary text-white"
-                    : "bg-transparent text-primary hover:bg-primary/10"
-                }`}
-                onClick={() => setActiveList("incoming")}
-              >
-                Incoming
-              </button>
-            </div>
-            {activeList === "friends" && <FriendsList />}
-            {activeList === "outgoing" && <OutgoingList />}
-            {activeList === "incoming" && <IncomingList />}
-            <div className="flex justify-center">
-              <button
-                className="mt-4 rounded-full bg-primary px-16 py-2 text-white shadow-lg hover:bg-primary/90"
-                onClick={() => setShowAddContactsModal(true)}
-              >
-                Add Contacts
-              </button>
-            </div>
+        <main className="flex flex-1 flex-col lg:flex-row justify-evenly p-4 lg:items-start items-center gap-4 ">
+          <div className="w-2/3 min-w-[340px] max-w-[650px]">
+            <Card className="">
+              <CardHeader>
+                <CardTitle className="mb-1 text-center font-bold">
+                  Invitations
+                </CardTitle>
+                <CardDescription className="text-center">
+                  Manage all your invitations here
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GetInvitations />
+              </CardContent>
+            </Card>
+          </div>
+          <div className="w-2/3 min-w-[340px] max-w-[650px]">
+            <Card className="">
+              <CardHeader>
+                <CardTitle className="mb-1 text-center font-bold">
+                  Contacts
+                </CardTitle>
+                <CardDescription className="text-center">
+                  Manage all your contacts here.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="justify-center flex">
+                <button
+                  className={`rounded-md px-4 py-2 transition-colors duration-300 ease-in-out ${
+                    activeList === "friends"
+                      ? "bg-primary text-white"
+                      : "bg-transparent text-primary hover:bg-primary/10"
+                  }`}
+                  onClick={() => setActiveList("friends")}
+                >
+                  Friends
+                </button>
+                <button
+                  className={`rounded-md px-4 py-2 transition-colors duration-300 ease-in-out ${
+                    activeList === "outgoing"
+                      ? "bg-primary text-white"
+                      : "bg-transparent text-primary hover:bg-primary/10"
+                  }`}
+                  onClick={() => setActiveList("outgoing")}
+                >
+                  Outgoing
+                </button>
+                <button
+                  className={`rounded-md px-4 py-2 transition-colors duration-300 ease-in-out ${
+                    activeList === "incoming"
+                      ? "bg-primary text-white"
+                      : "bg-transparent text-primary hover:bg-primary/10"
+                  }`}
+                  onClick={() => setActiveList("incoming")}
+                >
+                  Incoming
+                </button>
+              </CardContent>
+              {activeList === "friends" && <FriendsList />}
+              {activeList === "outgoing" && <OutgoingList />}
+              {activeList === "incoming" && <IncomingList />}
+              <CardFooter className="justify-center">
+                <button
+                  className="mt-4 rounded-full bg-primary px-16 py-2 text-white shadow-lg hover:bg-primary/90"
+                  onClick={() => setShowAddContactsModal(true)}
+                >
+                  Add Contacts
+                </button>
+              </CardFooter>
+            </Card>
           </div>
         </main>
       </div>
