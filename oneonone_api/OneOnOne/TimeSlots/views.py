@@ -35,6 +35,9 @@ class TimeSlotListCreateAPIView(generics.ListCreateAPIView):
         day_id = self.kwargs.get("day_id")
         day = get_object_or_404(Day, id=day_id)
 
+        # Delete all old timeslots related to the day before creating a new one
+        TimeSlot.objects.filter(day=day).delete()
+
         # Check if the user is a participant of the calendar
         user = self.request.user
         is_participant = Participant.objects.filter(
