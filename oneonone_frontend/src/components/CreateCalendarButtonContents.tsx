@@ -9,7 +9,14 @@ import {
   CardTitle,
 } from "./ui/card";
 import CustomCalendar from "./CustomCalendar";
-import { Link, PencilIcon, PlusIcon, Trash2 } from "lucide-react";
+import {
+  Download,
+  Link,
+  LockOpen,
+  PencilIcon,
+  PlusIcon,
+  Trash2,
+} from "lucide-react";
 
 const CreateCalendarButtonContents = () => {
   return (
@@ -31,8 +38,14 @@ const CreateCalendarButtonContents = () => {
             <Button variant="outline" size="icon">
               <Link size={24} />
             </Button>
-            <Button size="icon">
+            <Button size="icon" variant="outline">
+              <Download size={24} />
+            </Button>
+            <Button size="icon" variant="outline">
               <PencilIcon size={24} />
+            </Button>
+            <Button size="icon">
+              <LockOpen size={24} />
             </Button>
           </CardFooter>
         </Card>

@@ -11,12 +11,16 @@ import {
 import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 
 type CustomCalendarProps = {
+  isFinalized: boolean;
+  isFinalizedMessage?: string;
   allParticipants?: string[];
   timeslotDensity?: Record<string, string[]>;
   selectedDays?: Date[];
 };
 
 const CustomCalendar: React.FC<CustomCalendarProps> = ({
+  isFinalized,
+  isFinalizedMessage,
   allParticipants = [],
   timeslotDensity = {},
   selectedDays = [],
@@ -74,7 +78,7 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
   return (
     <UICalendar
       mode="multiple"
-      modifiers={modifiers}
+      modifiers={isFinalized ? {} : modifiers}
       modifiersStyles={modifiersStyles}
       selected={selectedDays}
       components={{
@@ -106,7 +110,9 @@ const CustomCalendar: React.FC<CustomCalendarProps> = ({
                     />
                   </TooltipTrigger>
                   <TooltipContent side="top">
-                    {allParticipants.length === 0 ? (
+                    {isFinalized ? (
+                      <p>{isFinalizedMessage}</p>
+                    ) : allParticipants.length === 0 ? (
                       <p>No participants in calendar</p>
                     ) : (
                       <ul>

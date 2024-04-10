@@ -42,6 +42,10 @@ export type Day = {
 
 export type Calendar = {
   id: number;
+  is_finalized: boolean;
+  final_date: string | null;
+  final_timeslot_start: string | null;
+  final_timeslot_end: string | null;
   creator_username: string;
   title: string;
   description: string;
