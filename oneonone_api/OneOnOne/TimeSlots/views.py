@@ -6,12 +6,13 @@ from rest_framework import generics
 from Calendars.models import Day, Participant
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
+from .serializers import TimeSlotListSerializer
 
 
 @extend_schema_view(
     create=extend_schema(
         description="Create a new time slot",
-        responses={201: OpenApiResponse(response=TimeSlotSerializer)},
+        responses={201: OpenApiResponse(response=TimeSlotListSerializer)},
     ),
     list=extend_schema(
         description="List all timeslots",
@@ -21,8 +22,14 @@ from rest_framework.exceptions import PermissionDenied
 )
 class TimeSlotListCreateAPIView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = TimeSlotSerializer
     queryset = TimeSlot.objects.all()
+    pagination_class = None
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return TimeSlotListSerializer
+        else:
+            return TimeSlotSerializer
 
     def perform_create(self, serializer):
         day_id = self.kwargs.get("day_id")

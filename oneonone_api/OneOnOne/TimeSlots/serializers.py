@@ -26,3 +26,14 @@ class TimeSlotSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         timeslot = TimeSlot.objects.create(**validated_data)
         return timeslot
+
+
+class TimeSlotListSerializer(serializers.ListSerializer):
+    child = TimeSlotSerializer()
+
+    class Meta:
+        fields = ["timeslots"]
+
+    def create(self, validated_data):
+        timeslots = [TimeSlot.objects.create(**item) for item in validated_data]
+        return timeslots
